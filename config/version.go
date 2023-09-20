@@ -28,6 +28,6 @@ func (v *Version) ToString() string {
 	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
 }
 
-var VERSION = Version{1, 0, 0}
+var VERSION = Version{1, 0, 1}
 
 var USERAGENT = "kilonevo/" + VERSION.ToString()

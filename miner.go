@@ -21,7 +21,6 @@ package main
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"kilonevo/config"
 	"kilonevo/kilolog"
 	"kilonevo/mutex"
@@ -45,15 +44,6 @@ var cl *stratumclient.Client
 
 var lastSeedhash string
 
-type RNStatus uint8
-
-const (
-	StatusNotStarted RNStatus = 0
-	StatusStarting   RNStatus = 1
-	StatusOk         RNStatus = 2
-)
-
-var rnStatus RNStatus
 var threads int
 
 func StartMiner() {
@@ -80,9 +70,7 @@ func StartMiner() {
 
 var (
 	// miner config
-	configMutex sync.Mutex
-	// plArgs (pool login args) is nil if nobody is currently logged in, which also implies
-	// dispatch loop isn't active.
+	configMutex                      sync.Mutex
 	lastSeed                         []byte
 	excludeHourStart, excludeHourEnd int
 
@@ -141,12 +129,7 @@ func MiningLoop(jobChan <-chan *rpc.CompleteJob) {
 				diff = template.MidDiffToDiff(jbl.Target)
 			}
 
-			infoStr := fmt.Sprint("Current job: ", job.JobID, "  Difficulty: ", diff)
-			if getMiningActivityState() < 0 {
-				kilolog.Info(infoStr, " Mining: PAUSED")
-			} else {
-				kilolog.Info(infoStr, " Mining: ACTIVE")
-			}
+			kilolog.Info("New job:", job.JobID, "difficulty: ", diff)
 		case <-time.After(30 * time.Second):
 			break
 		}
@@ -179,7 +162,6 @@ func MiningLoop(jobChan <-chan *rpc.CompleteJob) {
 		}
 
 		atomic.StoreUint32(&stopper, 0)
-		kilolog.Info("going to mine!")
 		for i := 0; i < threads; i++ {
 			wg.Add(1)
 			go goMine(*job, i /*thread*/, diff)
@@ -241,7 +223,7 @@ func goMine(job rpc.CompleteJob, thread int, diff uint64) {
 			break
 		}
 		stats.TallyHashes(uint64(res))
-		kilolog.Info("Share found by thread:", thread, "Difficulty:", diff)
+		kilolog.Info("Share found by thread:", thread, "difficulty:", diff)
 		fnonce := hex.EncodeToString(nonce)
 		// submit in a separate thread so we can resume hashing immediately.
 		go func(fnonce, jobid string) {

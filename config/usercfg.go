@@ -70,9 +70,9 @@ const DefaultConfig = `{
 			"pass": "x"
 		}
 	],
-	"print_interval": 60,
+	"print_interval": 120,
 	"interactive": true,
-	"max_concurrency": 4,
+	"max_concurrency": 1024,
 	"colors": true,
 	"log_date": true,
 	"title": true,
