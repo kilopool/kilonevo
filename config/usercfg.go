@@ -58,14 +58,14 @@ type Config struct {
 const DefaultConfig = `{
 	"pools": [
 		{
-			"url": "eu.stratum.kilopool.com:PORT_TLS",
-			"tls": true,
+			"url": "nevo.kilopool.com:3333",
+			"tls": false,
 			"user": "YOUR_WALLET_ADDRESS",
 			"pass": "x"
 		},
 		{
-			"url": "eu.stratum.kilopool.com:PORT_NO_TLS",
-			"tls": false,
+			"url": "nevo.kilopool.com:3334",
+			"tls": true,
 			"user": "YOUR_WALLET_ADDRESS",
 			"pass": "x"
 		}
